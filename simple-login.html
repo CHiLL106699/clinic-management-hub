@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>簡易登入測試</title>
+</head>
+<body>
+  <h1>簡易登入測試</h1>
+  <input type="password" id="pwd" placeholder="輸入admin123">
+  <button onclick="login()">登入</button>
+  <p id="msg"></p>
+  
+  <script>
+    function login() {
+      const pwd = document.getElementById('pwd').value;
+      if (pwd === 'admin123') {
+        sessionStorage.setItem('adminAuth', 'true');
+        document.getElementById('msg').textContent = '登入成功!正在跳轉...';
+        document.getElementById('msg').style.color = 'green';
+        setTimeout(() => {
+          window.location.href = 'multi-clinic-dashboard.html';
+        }, 1000);
+      } else {
+        document.getElementById('msg').textContent = '密碼錯誤';
+        document.getElementById('msg').style.color = 'red';
+      }
+    }
+  </script>
+</body>
+</html>
