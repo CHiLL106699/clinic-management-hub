@@ -152,7 +152,7 @@
       
       if (password === ADMIN_PASSWORD) {
         // 儲存登入狀態
-        sessionStorage.setItem('adminLoggedIn', 'true');
+        sessionStorage.setItem('adminAuth', 'true');
         // 跳轉到管理頁面
         window.location.href = 'multi-clinic-dashboard.html';
       } else {
