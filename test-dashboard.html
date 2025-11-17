@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>測試儀表板</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <h1>測試多診所管理中心</h1>
+  <div id="output"></div>
+  
+  <script>
+    const MULTI_URL = 'https://pizzpwesrbulfjylejlu.supabase.co';
+    const MULTI_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpenpwd2VzcmJ1bGZqeWxlamx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDE1MzgsImV4cCI6MjA3NjIxNzUzOH0.xkVhoQhKBaPGkBzU1tuzAH49rP91gUaBLZFffcnKZIk';
+    
+    const YUEMEI_URL = 'https://clzjdlykhjwrlksyjlfz.supabase.co';
+    const YUEMEI_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsempkbHlraGp3cmxrc3lqbGZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3OTM2ODAsImV4cCI6MjA3NTM2OTY4MH0.V6QAoh4N2aSF5CgDYfKTnY8cMQnDV3AYilj7TbpWJcU';
+    
+    async function test() {
+      const output = document.getElementById('output');
+      output.innerHTML = '<p>開始測試...</p>';
+      
+      try {
+        // 測試多診所資料庫
+        const multiClient = supabase.createClient(MULTI_URL, MULTI_KEY);
+        const { data: clinics, error: clinicsError } = await multiClient
+          .from('clinics')
+          .select('*');
+        
+        if (clinicsError) throw clinicsError;
+        output.innerHTML += `<p>✓ 診所數量: ${clinics.length}</p>`;
+        output.innerHTML += `<pre>${JSON.stringify(clinics, null, 2)}</pre>`;
+        
+        // 測試邊美資料庫
+        const yuemeiClient = supabase.createClient(YUEMEI_URL, YUEMEI_KEY);
+        const { data: appointments, error: appointmentsError } = await yuemeiClient
+          .from('flos_appointments')
+          .select('*', { count: 'exact', head: true });
+        
+        if (appointmentsError) throw appointmentsError;
+        output.innerHTML += `<p>✓ 邊美預約數: ${appointments}</p>`;
+        
+        output.innerHTML += '<p style="color: green;">✓ 所有測試通過！</p>';
+      } catch (error) {
+        output.innerHTML += `<p style="color: red;">✗ 錯誤: ${error.message}</p>`;
+        console.error(error);
+      }
+    }
+    
+    test();
+  </script>
+</body>
+</html>
