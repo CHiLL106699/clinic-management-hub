@@ -27,6 +27,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
     .header-left {
@@ -49,16 +51,38 @@
       opacity: 0.9;
     }
 
-    .btn-logout {
+    .header-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
       padding: 10px 20px;
-      background: rgba(255, 255, 255, 0.2);
-      border: 2px solid white;
-      color: white;
+      border: none;
       border-radius: 8px;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
       transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-payment {
+      background: rgba(255, 193, 7, 0.9);
+      color: #333;
+    }
+
+    .btn-payment:hover {
+      background: #ffc107;
+      transform: translateY(-2px);
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
     }
 
     .btn-logout:hover {
@@ -108,86 +132,71 @@
     .stat-value {
       font-size: 32px;
       font-weight: bold;
-      color: #667eea;
-    }
-
-    /* Section */
-    .section {
-      background: white;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 30px;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 600;
       color: #333;
     }
 
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-weight: 500;
+    .stat-subtitle {
+      font-size: 12px;
+      color: #999;
+      margin-top: 8px;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+    /* Clinic List */
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-
-    /* Clinic Cards */
-    .clinic-grid {
+    .clinics-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 20px;
     }
 
     .clinic-card {
-      background: #f8f9fa;
-      border-radius: 12px;
-      padding: 20px;
-      border: 2px solid #e0e0e0;
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       transition: all 0.3s;
+      border: 2px solid transparent;
     }
 
     .clinic-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
       border-color: #667eea;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
     }
 
     .clinic-header {
       display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 15px;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
     }
 
-    .clinic-name {
+    .clinic-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #E91E63, #9C27B0);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+    }
+
+    .clinic-info h3 {
       font-size: 18px;
-      font-weight: 600;
-      color: #333;
       margin-bottom: 5px;
     }
 
     .clinic-status {
+      display: inline-block;
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 12px;
@@ -195,28 +204,39 @@
     }
 
     .status-active {
-      background: #4caf50;
-      color: white;
-    }
-
-    .status-trial {
-      background: #ff9800;
-      color: white;
+      background: #e8f5e9;
+      color: #2e7d32;
     }
 
     .status-inactive {
-      background: #9e9e9e;
-      color: white;
+      background: #ffebee;
+      color: #c62828;
     }
 
-    .clinic-info {
-      font-size: 14px;
+    .clinic-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .clinic-stat {
+      text-align: center;
+      padding: 15px;
+      background: #f5f7fa;
+      border-radius: 10px;
+    }
+
+    .clinic-stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .clinic-stat-label {
+      font-size: 12px;
       color: #666;
-      margin-bottom: 15px;
-    }
-
-    .clinic-info div {
-      margin-bottom: 8px;
+      margin-top: 5px;
     }
 
     .clinic-actions {
@@ -224,91 +244,78 @@
       gap: 10px;
     }
 
-    .btn-small {
-      padding: 8px 16px;
-      font-size: 13px;
+    .btn-primary {
       flex: 1;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
     .btn-secondary {
-      background: #e0e0e0;
-      color: #333;
+      flex: 1;
+      padding: 12px;
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
     }
 
     .btn-secondary:hover {
-      background: #d0d0d0;
+      background: #667eea;
+      color: white;
     }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
     }
 
-    .modal.show {
-      display: flex;
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
     }
 
-    .modal-content {
-      background: white;
-      border-radius: 15px;
-      padding: 30px;
-      max-width: 500px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    .modal-header {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
 
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      color: #333;
-      margin-bottom: 8px;
-      font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 10px 14px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color 0.3s;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 25px;
-    }
-
-    .modal-actions button {
-      flex: 1;
+      .clinics-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -319,297 +326,203 @@
       <div class="logo-icon">🏥</div>
       <div class="header-title">
         <h1>多診所管理中心</h1>
-        <p>Multi-Clinic Management System</p>
+        <p>Multi-Clinic Management Hub</p>
       </div>
     </div>
-    <button class="btn-logout" onclick="logout()">登出</button>
+    <div class="header-right">
+      <a href="payment-methods.html" class="btn btn-payment">💳 付款方式</a>
+      <button class="btn btn-logout" onclick="logout()">登出</button>
+    </div>
   </div>
 
-  <!-- Container -->
+  <!-- Main Container -->
   <div class="container">
-    <!-- Stats -->
+    <!-- Statistics -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon">🏥</div>
-        <div class="stat-label">總診所數</div>
+        <div class="stat-label">訂閱診所總數</div>
         <div class="stat-value" id="totalClinics">0</div>
+        <div class="stat-subtitle">Total Clinics</div>
       </div>
+
       <div class="stat-card">
         <div class="stat-icon">✅</div>
-        <div class="stat-label">啟用中</div>
+        <div class="stat-label">啟用中診所</div>
         <div class="stat-value" id="activeClinics">0</div>
+        <div class="stat-subtitle">Active Clinics</div>
       </div>
+
       <div class="stat-card">
         <div class="stat-icon">📅</div>
         <div class="stat-label">總預約數</div>
         <div class="stat-value" id="totalBookings">0</div>
+        <div class="stat-subtitle">Total Bookings</div>
       </div>
+
       <div class="stat-card">
-        <div class="stat-icon">💰</div>
-        <div class="stat-label">本月收入</div>
-        <div class="stat-value" id="monthlyRevenue">$0</div>
+        <div class="stat-icon">⏰</div>
+        <div class="stat-label">待處理預約</div>
+        <div class="stat-value" id="pendingBookings">0</div>
+        <div class="stat-subtitle">Pending Bookings</div>
       </div>
     </div>
 
-    <!-- Clinics List -->
-    <div class="section">
-      <div class="section-header">
-        <h2 class="section-title">診所列表</h2>
-        <button class="btn btn-primary" onclick="openAddClinicModal()">
-          ➕ 新增診所
-        </button>
-      </div>
-
-      <div class="clinic-grid" id="clinicGrid">
-        <!-- Clinic cards will be inserted here -->
-      </div>
+    <!-- Clinic List -->
+    <div class="section-title">
+      <span>📋</span>
+      <span>診所列表</span>
     </div>
-  </div>
-
-  <!-- Add/Edit Clinic Modal -->
-  <div class="modal" id="clinicModal">
-    <div class="modal-content">
-      <h3 class="modal-header" id="modalTitle">新增診所</h3>
-      
-      <form id="clinicForm">
-        <div class="form-group">
-          <label for="clinicName">診所名稱 *</label>
-          <input type="text" id="clinicName" required>
-        </div>
-
-        <div class="form-group">
-          <label for="lineBotId">LINE Bot ID</label>
-          <input type="text" id="lineBotId" placeholder="例如：@flos-clinic">
-        </div>
-
-        <div class="form-group">
-          <label for="adminUrl">後台網址</label>
-          <input type="url" id="adminUrl" placeholder="https://...">
-        </div>
-
-        <div class="form-group">
-          <label for="subscriptionStatus">訂閱狀態 *</label>
-          <select id="subscriptionStatus" required>
-            <option value="trial">試用中</option>
-            <option value="active">啟用</option>
-            <option value="inactive">停用</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="subscriptionExpiry">訂閱到期日</label>
-          <input type="date" id="subscriptionExpiry">
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-          <button type="submit" class="btn btn-primary">儲存</button>
-        </div>
-      </form>
+    <div class="clinics-grid" id="clinicsList">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>載入中...</p>
+      </div>
     </div>
   </div>
 
   <script>
     // Supabase 配置
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-    const SUPABASE_KEY = 'YOUR_SUPABASE_KEY';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const MULTI_SUPABASE_URL = 'https://pizzpwesrbulfjylejlu.supabase.co';
+    const MULTI_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpenpwd2VzcmJ1bGZqeWxlamx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2NDE1MzgsImV4cCI6MjA3NjIxNzUzOH0.xkVhoQhKBaPGkBzU1tuzAH49rP91gUaBLZFffcnKZIk';
 
-    let currentEditingId = null;
+    const YUEMEI_SUPABASE_URL = 'https://clzjdlykhjwrlksyjlfz.supabase.co';
+    const YUEMEI_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsempkbHlraGp3cmxrc3lqbGZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3OTM2ODAsImV4cCI6MjA3NTM2OTY4MH0.V6QAoh4N2aSF5CgDYfKTnY8cMQnDV3AYilj7TbpWJcU';
+
+    const multiClient = supabase.createClient(MULTI_SUPABASE_URL, MULTI_SUPABASE_KEY);
+    const yuemeiClient = supabase.createClient(YUEMEI_SUPABASE_URL, YUEMEI_SUPABASE_KEY);
+
+    // 診所配置
+    const CLINIC_CONFIGS = {
+      'yuemei': {
+        name: '邊美診所',
+        icon: '💖',
+        adminUrl: 'https://rad-paletas-14483a.netlify.app/admin-dashboard.html',
+        lineBotId: '@759wnkso',
+        supabaseClient: yuemeiClient,
+        appointmentTable: 'flos_appointments'
+      }
+    };
 
     // 檢查登入狀態
-    if (!sessionStorage.getItem('adminLoggedIn')) {
-      window.location.href = 'multi-clinic-login.html';
+    function checkAuth() {
+      const isAuthenticated = sessionStorage.getItem('adminAuth');
+      if (!isAuthenticated) {
+        window.location.href = 'multi-clinic-login.html';
+      }
     }
 
     // 登出
     function logout() {
-      sessionStorage.removeItem('adminLoggedIn');
+      sessionStorage.removeItem('adminAuth');
       window.location.href = 'multi-clinic-login.html';
     }
 
-    // 載入資料
-    async function loadData() {
-      await loadStats();
-      await loadClinics();
-    }
-
-    // 載入統計資料
-    async function loadStats() {
-      try {
-        // 載入診所統計
-        const { data: clinics } = await supabase
-          .from('clinics')
-          .select('*');
-
-        const totalClinics = clinics?.length || 0;
-        const activeClinics = clinics?.filter(c => c.subscriptionStatus === 'active').length || 0;
-
-        document.getElementById('totalClinics').textContent = totalClinics;
-        document.getElementById('activeClinics').textContent = activeClinics;
-
-        // 載入預約統計
-        const { data: bookings } = await supabase
-          .from('yuemeiBookings')
-          .select('*');
-
-        document.getElementById('totalBookings').textContent = bookings?.length || 0;
-
-        // TODO: 計算本月收入
-        document.getElementById('monthlyRevenue').textContent = '$0';
-      } catch (error) {
-        console.error('載入統計失敗:', error);
-      }
-    }
-
-    // 載入診所列表
+    // 載入診所資料
     async function loadClinics() {
       try {
-        const { data: clinics, error } = await supabase
+        // 從多診所資料庫載入診所列表
+        const { data: clinics, error } = await multiClient
           .from('clinics')
           .select('*')
-          .order('createdAt', { ascending: false });
+          .order('created_at', { ascending: false });
 
         if (error) throw error;
 
-        const clinicGrid = document.getElementById('clinicGrid');
-        
-        if (!clinics || clinics.length === 0) {
-          clinicGrid.innerHTML = '<p style="text-align: center; color: #666;">尚無診所資料</p>';
-          return;
-        }
+        // 更新統計數據
+        document.getElementById('totalClinics').textContent = clinics.length;
+        document.getElementById('activeClinics').textContent = clinics.length;
 
-        clinicGrid.innerHTML = clinics.map(clinic => `
-          <div class="clinic-card">
-            <div class="clinic-header">
-              <div>
-                <div class="clinic-name">${clinic.clinicName}</div>
-                <div style="font-size: 12px; color: #999;">ID: ${clinic.id}</div>
+        // 載入各診所的預約數據
+        let totalBookings = 0;
+        let pendingBookings = 0;
+
+        const clinicsHtml = await Promise.all(clinics.map(async (clinic) => {
+          const config = CLINIC_CONFIGS[clinic.slug];
+          if (!config) return '';
+
+          // 查詢該診所的預約數據
+          const { data: appointments, error: appointmentError } = await config.supabaseClient
+            .from(config.appointmentTable)
+            .select('*', { count: 'exact', head: false });
+
+          const clinicBookings = appointments ? appointments.length : 0;
+          const clinicPending = appointments ? appointments.filter(a => a.status === '待確認' || a.status === '預約中').length : 0;
+
+          totalBookings += clinicBookings;
+          pendingBookings += clinicPending;
+
+          return `
+            <div class="clinic-card">
+              <div class="clinic-header">
+                <div class="clinic-icon">${config.icon}</div>
+                <div class="clinic-info">
+                  <h3>${config.name}</h3>
+                  <span class="clinic-status status-active">啟用中</span>
+                </div>
               </div>
-              <span class="clinic-status status-${clinic.subscriptionStatus}">
-                ${getStatusText(clinic.subscriptionStatus)}
-              </span>
+
+              <div class="clinic-stats">
+                <div class="clinic-stat">
+                  <div class="clinic-stat-value">${clinicBookings}</div>
+                  <div class="clinic-stat-label">總預約數</div>
+                </div>
+                <div class="clinic-stat">
+                  <div class="clinic-stat-value">${clinicPending}</div>
+                  <div class="clinic-stat-label">待處理</div>
+                </div>
+              </div>
+
+              <div class="clinic-actions">
+                <button class="btn-primary" onclick="openClinicAdmin('${config.adminUrl}')">
+                  🚀 進入後台
+                </button>
+                <button class="btn-secondary" onclick="viewClinicDetails('${clinic.slug}')">
+                  📊 查看詳情
+                </button>
+              </div>
+
+              <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
+                <div>LINE Bot: ${config.lineBotId}</div>
+                <div>建立時間: ${new Date(clinic.created_at).toLocaleDateString('zh-TW')}</div>
+              </div>
             </div>
+          `;
+        }));
 
-            <div class="clinic-info">
-              <div>📱 LINE Bot: ${clinic.lineBotId || '未設定'}</div>
-              <div>🔗 後台: ${clinic.adminUrl ? '<a href="' + clinic.adminUrl + '" target="_blank">開啟</a>' : '未設定'}</div>
-              <div>📅 到期日: ${clinic.subscriptionExpiry ? new Date(clinic.subscriptionExpiry).toLocaleDateString('zh-TW') : '未設定'}</div>
-            </div>
+        // 更新總預約數和待處理數
+        document.getElementById('totalBookings').textContent = totalBookings;
+        document.getElementById('pendingBookings').textContent = pendingBookings;
 
-            <div class="clinic-actions">
-              <button class="btn btn-secondary btn-small" onclick="editClinic(${clinic.id})">
-                ✏️ 編輯
-              </button>
-              <button class="btn btn-primary btn-small" onclick="viewClinicStats(${clinic.id})">
-                📊 統計
-              </button>
-            </div>
-          </div>
-        `).join('');
-      } catch (error) {
-        console.error('載入診所列表失敗:', error);
-        alert('載入失敗，請重新整理頁面');
-      }
-    }
+        // 顯示診所列表
+        document.getElementById('clinicsList').innerHTML = clinicsHtml.join('');
 
-    function getStatusText(status) {
-      const statusMap = {
-        'active': '啟用中',
-        'trial': '試用中',
-        'inactive': '已停用'
-      };
-      return statusMap[status] || status;
-    }
-
-    // 開啟新增診所 Modal
-    function openAddClinicModal() {
-      currentEditingId = null;
-      document.getElementById('modalTitle').textContent = '新增診所';
-      document.getElementById('clinicForm').reset();
-      document.getElementById('clinicModal').classList.add('show');
-    }
-
-    // 編輯診所
-    async function editClinic(id) {
-      currentEditingId = id;
-      
-      try {
-        const { data: clinic, error } = await supabase
-          .from('clinics')
-          .select('*')
-          .eq('id', id)
-          .single();
-
-        if (error) throw error;
-
-        document.getElementById('modalTitle').textContent = '編輯診所';
-        document.getElementById('clinicName').value = clinic.clinicName;
-        document.getElementById('lineBotId').value = clinic.lineBotId || '';
-        document.getElementById('adminUrl').value = clinic.adminUrl || '';
-        document.getElementById('subscriptionStatus').value = clinic.subscriptionStatus;
-        document.getElementById('subscriptionExpiry').value = clinic.subscriptionExpiry ? clinic.subscriptionExpiry.split('T')[0] : '';
-        
-        document.getElementById('clinicModal').classList.add('show');
       } catch (error) {
         console.error('載入診所資料失敗:', error);
-        alert('載入失敗');
+        document.getElementById('clinicsList').innerHTML = `
+          <div class="loading">
+            <p style="color: #c62828;">❌ 載入失敗: ${error.message}</p>
+          </div>
+        `;
       }
     }
 
-    // 關閉 Modal
-    function closeModal() {
-      document.getElementById('clinicModal').classList.remove('show');
+    // 開啟診所後台
+    function openClinicAdmin(url) {
+      window.open(url, '_blank');
     }
 
-    // 儲存診所
-    document.getElementById('clinicForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const clinicData = {
-        clinicName: document.getElementById('clinicName').value,
-        lineBotId: document.getElementById('lineBotId').value || null,
-        adminUrl: document.getElementById('adminUrl').value || null,
-        subscriptionStatus: document.getElementById('subscriptionStatus').value,
-        subscriptionExpiry: document.getElementById('subscriptionExpiry').value || null,
-      };
-
-      try {
-        if (currentEditingId) {
-          // 更新
-          const { error } = await supabase
-            .from('clinics')
-            .update(clinicData)
-            .eq('id', currentEditingId);
-
-          if (error) throw error;
-          alert('更新成功！');
-        } else {
-          // 新增
-          const { error } = await supabase
-            .from('clinics')
-            .insert([clinicData]);
-
-          if (error) throw error;
-          alert('新增成功！');
-        }
-
-        closeModal();
-        loadData();
-      } catch (error) {
-        console.error('儲存失敗:', error);
-        alert('儲存失敗：' + error.message);
-      }
-    });
-
-    // 查看診所統計
-    function viewClinicStats(id) {
-      // TODO: 實作診所統計頁面
-      alert('診所統計功能開發中...');
+    // 查看診所詳情
+    function viewClinicDetails(slug) {
+      alert(`診所詳情功能開發中...\n診所代碼: ${slug}`);
     }
 
     // 初始化
-    loadData();
+    checkAuth();
+    loadClinics();
+
+    // 每30秒自動重新整理數據
+    setInterval(loadClinics, 30000);
   </script>
 </body>
 </html>
