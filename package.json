@@ -1,0 +1,11 @@
+{
+  "name": "clinic-management-hub",
+  "version": "1.0.0",
+  "description": "Multi-Clinic Management Hub - 多診所管理中心",
+  "scripts": {
+    "build": "echo 'No build step required for static site'"
+  },
+  "keywords": ["clinic", "management", "healthcare"],
+  "author": "CHiLL106699",
+  "license": "MIT"
+}
