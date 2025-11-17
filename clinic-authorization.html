@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>診所授權管理 - 多診所管理中心</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-icon {
+      font-size: 32px;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+      color: white;
+    }
+
+    .btn-back:hover {
+      background: white;
+      color: #667eea;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* Clinics Table */
+    .clinics-table {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .table-header h2 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .table-header p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f8f9fa;
+    }
+
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #666;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-authorized {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-unauthorized {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .subscription-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .subscription-active {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .subscription-inactive {
+      background: #fce4ec;
+      color: #ad1457;
+    }
+
+    .subscription-expired {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+      margin-right: 5px;
+    }
+
+    .btn-authorize {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-authorize:hover {
+      background: #45a049;
+    }
+
+    .btn-revoke {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-revoke:hover {
+      background: #da190b;
+    }
+
+    .btn-extend {
+      background: #2196f3;
+      color: white;
+    }
+
+    .btn-extend:hover {
+      background: #0b7dda;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-confirm {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-cancel {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .btn-cancel:hover {
+      background: #d0d0d0;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">🔐</div>
+      <div class="header-title">
+        <h1>診所授權管理</h1>
+        <p>Clinic Authorization Management</p>
+      </div>
+    </div>
+    <a href="multi-clinic-dashboard.html" class="btn btn-back">← 返回儀表板</a>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="clinics-table">
+      <div class="table-header">
+        <h2>📋 診所授權列表</h2>
+        <p>管理診所的授權狀態和訂閱期限</p>
+      </div>
+
+      <div id="tableContent">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>載入中...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authorization Modal -->
+  <div id="authModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">🔓 授權診所</div>
+      <div class="form-group">
+        <label>診所名稱</label>
+        <input type="text" id="modalClinicName" readonly>
+      </div>
+      <div class="form-group">
+        <label>訂閱期限（月）</label>
+        <select id="modalDuration">
+          <option value="1">1 個月</option>
+          <option value="3">3 個月</option>
+          <option value="6">6 個月</option>
+          <option value="12" selected>12 個月（1年）</option>
+          <option value="24">24 個月（2年）</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-confirm" onclick="confirmAuthorization()">確認授權</button>
+        <button class="btn-cancel" onclick="closeModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Supabase 配置
+    const SUPABASE_URL = 'https://pizzpwesrbulfjylejlu.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpenpwd2VzcmJ1bGZqeWxlamx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE4MzU2NjYsImV4cCI6MjA0NzQxMTY2Nn0.5pYm8aCPSKdYFDqPSZzCxNqPaD2Ij3Yd_XQXK8qYqSM';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentClinicId = null;
+
+    // 檢查登入狀態
+    function checkAuth() {
+      const isAuthenticated = sessionStorage.getItem('adminAuth');
+      if (!isAuthenticated) {
+        window.location.href = 'multi-clinic-login.html';
+      }
+    }
+
+    // 載入診所列表
+    async function loadClinics() {
+      try {
+        const { data: clinics, error } = await supabase
+          .from('clinics')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const tableHtml = `
+          <table>
+            <thead>
+              <tr>
+                <th>診所名稱</th>
+                <th>授權狀態</th>
+                <th>訂閱狀態</th>
+                <th>訂閱期限</th>
+                <th>授權人</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${clinics.map(clinic => {
+                const isAuthorized = clinic.is_authorized;
+                const subscriptionStatus = clinic.subscription_status || 'inactive';
+                const endDate = clinic.subscription_end_date ? new Date(clinic.subscription_end_date) : null;
+                const isExpired = endDate && endDate < new Date();
+                
+                let statusClass = 'subscription-inactive';
+                let statusText = '未啟用';
+                if (subscriptionStatus === 'active' && !isExpired) {
+                  statusClass = 'subscription-active';
+                  statusText = '啟用中';
+                } else if (isExpired) {
+                  statusClass = 'subscription-expired';
+                  statusText = '已過期';
+                }
+
+                return `
+                  <tr>
+                    <td><strong>${clinic.name}</strong><br><small style="color: #999;">${clinic.slug}</small></td>
+                    <td>
+                      <span class="status-badge ${isAuthorized ? 'status-authorized' : 'status-unauthorized'}">
+                        ${isAuthorized ? '✅ 已授權' : '❌ 未授權'}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="subscription-badge ${statusClass}">
+                        ${statusText}
+                      </span>
+                    </td>
+                    <td>
+                      ${endDate ? endDate.toLocaleDateString('zh-TW') : '-'}
+                      ${endDate && !isExpired ? `<br><small style="color: #999;">剩餘 ${Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24))} 天</small>` : ''}
+                    </td>
+                    <td>${clinic.authorized_by || '-'}</td>
+                    <td>
+                      ${!isAuthorized ? 
+                        `<button class="action-btn btn-authorize" onclick="openAuthModal(${clinic.id}, '${clinic.name}')">授權</button>` :
+                        `<button class="action-btn btn-revoke" onclick="revokeAuthorization(${clinic.id})">撤銷</button>
+                         <button class="action-btn btn-extend" onclick="extendSubscription(${clinic.id})">延長</button>`
+                      }
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+
+        document.getElementById('tableContent').innerHTML = tableHtml;
+
+      } catch (error) {
+        console.error('載入診所列表失敗:', error);
+        document.getElementById('tableContent').innerHTML = `
+          <div class="loading">
+            <p style="color: #c62828;">❌ 載入失敗: ${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // 開啟授權 Modal
+    function openAuthModal(clinicId, clinicName) {
+      currentClinicId = clinicId;
+      document.getElementById('modalClinicName').value = clinicName;
+      document.getElementById('authModal').style.display = 'flex';
+    }
+
+    // 關閉 Modal
+    function closeModal() {
+      document.getElementById('authModal').style.display = 'none';
+      currentClinicId = null;
+    }
+
+    // 確認授權
+    async function confirmAuthorization() {
+      if (!currentClinicId) return;
+
+      const duration = parseInt(document.getElementById('modalDuration').value);
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + duration);
+
+      try {
+        const { error } = await supabase
+          .from('clinics')
+          .update({
+            is_authorized: true,
+            subscription_status: 'active',
+            subscription_start_date: startDate.toISOString(),
+            subscription_end_date: endDate.toISOString(),
+            authorized_by: '管理員',
+            authorized_at: new Date().toISOString()
+          })
+          .eq('id', currentClinicId);
+
+        if (error) throw error;
+
+        alert('✅ 授權成功！');
+        closeModal();
+        loadClinics();
+
+      } catch (error) {
+        console.error('授權失敗:', error);
+        alert('❌ 授權失敗: ' + error.message);
+      }
+    }
+
+    // 撤銷授權
+    async function revokeAuthorization(clinicId) {
+      if (!confirm('確定要撤銷此診所的授權嗎？')) return;
+
+      try {
+        const { error } = await supabase
+          .from('clinics')
+          .update({
+            is_authorized: false,
+            subscription_status: 'inactive',
+            subscription_end_date: new Date().toISOString()
+          })
+          .eq('id', clinicId);
+
+        if (error) throw error;
+
+        alert('✅ 已撤銷授權');
+        loadClinics();
+
+      } catch (error) {
+        console.error('撤銷授權失敗:', error);
+        alert('❌ 撤銷失敗: ' + error.message);
+      }
+    }
+
+    // 延長訂閱
+    async function extendSubscription(clinicId) {
+      const months = prompt('請輸入要延長的月數：', '12');
+      if (!months || isNaN(months)) return;
+
+      try {
+        // 先取得目前的訂閱期限
+        const { data: clinic, error: fetchError } = await supabase
+          .from('clinics')
+          .select('subscription_end_date')
+          .eq('id', clinicId)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        let newEndDate = new Date(clinic.subscription_end_date || new Date());
+        if (newEndDate < new Date()) {
+          newEndDate = new Date();
+        }
+        newEndDate.setMonth(newEndDate.getMonth() + parseInt(months));
+
+        const { error } = await supabase
+          .from('clinics')
+          .update({
+            subscription_end_date: newEndDate.toISOString(),
+            subscription_status: 'active'
+          })
+          .eq('id', clinicId);
+
+        if (error) throw error;
+
+        alert(`✅ 已延長訂閱 ${months} 個月`);
+        loadClinics();
+
+      } catch (error) {
+        console.error('延長訂閱失敗:', error);
+        alert('❌ 延長失敗: ' + error.message);
+      }
+    }
+
+    // 初始化
+    checkAuth();
+    loadClinics();
+  </script>
+</body>
+</html>
