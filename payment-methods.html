@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>付款方式 - 多診所管理中心</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-content {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn-outline:hover {
+      background: white;
+      color: #667eea;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .payment-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .payment-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+      border-left: 4px solid #667eea;
+    }
+
+    .payment-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .payment-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .payment-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .payment-title {
+      flex: 1;
+    }
+
+    .payment-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 3px;
+    }
+
+    .payment-desc {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .payment-info {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 1px;
+    }
+
+    .payment-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      flex: 1;
+      background: #f5f5f5;
+      color: #333;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .copy-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4caf50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .copy-notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #856404;
+    }
+
+    .note-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <div class="header-title">
+        <span style="font-size: 32px;">💳</span>
+        <h1>付款方式</h1>
+      </div>
+      <a href="/multi-clinic-dashboard.html" class="btn btn-outline">← 返回儀表板</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2 class="page-title">訂閱付款方式</h2>
+    <p class="page-subtitle">請選擇以下任一方式進行訂閱付款</p>
+
+    <div class="payment-methods">
+      <!-- 中國信託銀行轉帳 -->
+      <div class="payment-card">
+        <div class="payment-header">
+          <div class="payment-icon">🏦</div>
+          <div class="payment-title">
+            <div class="payment-name">中國信託商業銀行</div>
+            <div class="payment-desc">CTBC Bank - 銀行轉帳</div>
+          </div>
+        </div>
+        <div class="payment-info">
+          <div class="info-label">銀行代碼</div>
+          <div class="info-value">822</div>
+        </div>
+        <div class="payment-info">
+          <div class="info-label">帳號</div>
+          <div class="info-value" id="ctbcAccount">123-456-789012</div>
+        </div>
+        <div class="payment-info">
+          <div class="info-label">戶名</div>
+          <div class="info-value">多診所管理中心</div>
+        </div>
+        <div class="payment-actions">
+          <button class="btn-primary" onclick="copyToClipboard('123-456-789012', 'ctbc')">
+            📋 複製帳號
+          </button>
+        </div>
+      </div>
+
+      <!-- Richart 數位銀行 -->
+      <div class="payment-card">
+        <div class="payment-header">
+          <div class="payment-icon">💰</div>
+          <div class="payment-title">
+            <div class="payment-name">Richart 數位銀行</div>
+            <div class="payment-desc">台新銀行 Richart - 快速轉帳</div>
+          </div>
+        </div>
+        <div class="payment-info">
+          <div class="info-label">Richart ID</div>
+          <div class="info-value" id="richartId">@clinic-hub</div>
+        </div>
+        <div class="payment-actions">
+          <button class="btn-primary" onclick="openRichart()">
+            🚀 前往 Richart
+          </button>
+          <button class="btn-secondary" onclick="copyToClipboard('@clinic-hub', 'richart')">
+            📋 複製 ID
+          </button>
+        </div>
+      </div>
+
+      <!-- 街口支付 -->
+      <div class="payment-card">
+        <div class="payment-header">
+          <div class="payment-icon">📱</div>
+          <div class="payment-title">
+            <div class="payment-name">街口支付</div>
+            <div class="payment-desc">JKO Pay - 行動支付</div>
+          </div>
+        </div>
+        <div class="payment-info">
+          <div class="info-label">街口帳號</div>
+          <div class="info-value" id="jkoId">0912345678</div>
+        </div>
+        <div class="payment-actions">
+          <button class="btn-primary" onclick="openJKO()">
+            🚀 開啟街口支付
+          </button>
+          <button class="btn-secondary" onclick="copyToClipboard('0912345678', 'jko')">
+            📋 複製帳號
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <div class="note-title">💡 付款注意事項</div>
+      <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+        <li>完成付款後，請保留交易紀錄截圖</li>
+        <li>請透過 LINE 官方帳號或客服信箱回傳付款證明</li>
+        <li>我們將在確認付款後 24 小時內啟用您的訂閱服務</li>
+        <li>如有任何問題，請聯繫客服：support@clinic-hub.com</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 複製成功通知 -->
+  <div id="copyNotification" class="copy-notification">
+    ✓ 已複製到剪貼簿
+  </div>
+
+  <script>
+    // 複製到剪貼簿
+    function copyToClipboard(text, type) {
+      navigator.clipboard.writeText(text).then(() => {
+        showNotification();
+      }).catch(err => {
+        console.error('複製失敗:', err);
+        // 降級方案：使用舊的複製方法
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showNotification();
+        } catch (err) {
+          alert('複製失敗，請手動複製');
+        }
+        document.body.removeChild(textArea);
+      });
+    }
+
+    // 顯示複製成功通知
+    function showNotification() {
+      const notification = document.getElementById('copyNotification');
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 2000);
+    }
+
+    // 開啟 Richart
+    function openRichart() {
+      // Richart App 深層連結（如果在手機上）
+      const richartUrl = 'richart://transfer';
+      const webUrl = 'https://richart.tw/';
+      
+      // 嘗試開啟 App，失敗則開啟網頁
+      window.location.href = richartUrl;
+      setTimeout(() => {
+        window.open(webUrl, '_blank');
+      }, 1000);
+    }
+
+    // 開啟街口支付
+    function openJKO() {
+      // 街口支付 App 深層連結（如果在手機上）
+      const jkoUrl = 'jkopay://';
+      const webUrl = 'https://www.jkopay.com/';
+      
+      // 嘗試開啟 App，失敗則開啟網頁
+      window.location.href = jkoUrl;
+      setTimeout(() => {
+        window.open(webUrl, '_blank');
+      }, 1000);
+    }
+
+    // 檢查登入狀態
+    function checkAuth() {
+      if (sessionStorage.getItem('multiClinicAuth') !== 'true') {
+        window.location.href = '/multi-clinic-login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // 初始化
+    checkAuth();
+  </script>
+</body>
+</html>
