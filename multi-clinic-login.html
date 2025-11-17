@@ -24,22 +24,10 @@
     .login-container {
       background: white;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       padding: 40px;
-      width: 100%;
       max-width: 400px;
-      animation: slideUp 0.5s ease;
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
 
     .logo {
@@ -48,30 +36,19 @@
     }
 
     .logo-icon {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 40px;
-      margin-bottom: 15px;
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-    }
-
-    h1 {
-      font-size: 24px;
-      color: #333;
-      text-align: center;
+      font-size: 48px;
       margin-bottom: 10px;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #666;
+    .logo h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .logo p {
       font-size: 14px;
-      margin-bottom: 30px;
+      color: #666;
     }
 
     .form-group {
@@ -81,7 +58,7 @@
     label {
       display: block;
       font-size: 14px;
-      color: #555;
+      color: #333;
       margin-bottom: 8px;
       font-weight: 500;
     }
@@ -92,85 +69,46 @@
       border: 2px solid #e0e0e0;
       border-radius: 10px;
       font-size: 16px;
-      transition: all 0.3s;
-      font-family: inherit;
+      transition: border-color 0.3s;
     }
 
     input[type="password"]:focus {
       outline: none;
       border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    .login-btn {
+    .btn-login {
       width: 100%;
       padding: 14px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       border: none;
       border-radius: 10px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .login-btn:hover {
+    .btn-login:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
     }
 
-    .login-btn:active {
+    .btn-login:active {
       transform: translateY(0);
     }
 
     .error-message {
-      background: #ffebee;
-      color: #c62828;
-      padding: 12px;
-      border-radius: 8px;
+      color: #f44336;
       font-size: 14px;
-      margin-bottom: 20px;
+      margin-top: 10px;
+      text-align: center;
       display: none;
-      border-left: 4px solid #c62828;
     }
 
     .error-message.show {
       display: block;
-      animation: shake 0.5s;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      color: #999;
-      font-size: 12px;
-    }
-
-    .password-toggle {
-      position: relative;
-    }
-
-    .toggle-icon {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #999;
-      font-size: 20px;
-      user-select: none;
-    }
-
-    .toggle-icon:hover {
-      color: #667eea;
     }
   </style>
 </head>
@@ -179,101 +117,51 @@
     <div class="logo">
       <div class="logo-icon">🏥</div>
       <h1>多診所管理中心</h1>
-      <p class="subtitle">Multi-Clinic Management Hub</p>
-    </div>
-
-    <div class="error-message" id="errorMessage">
-      密碼錯誤，請重新輸入
+      <p>Multi-Clinic Management System</p>
     </div>
 
     <form id="loginForm">
       <div class="form-group">
         <label for="password">管理員密碼</label>
-        <div class="password-toggle">
-          <input 
-            type="password" 
-            id="password" 
-            placeholder="請輸入管理員密碼"
-            required
-            autocomplete="current-password"
-          >
-          <span class="toggle-icon" id="togglePassword">👁️</span>
-        </div>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          placeholder="請輸入管理員密碼"
+          required
+        >
       </div>
 
-      <button type="submit" class="login-btn">登入管理中心</button>
-    </form>
+      <button type="submit" class="btn-login">登入</button>
 
-    <div class="footer">
-      © 2025 多診所管理中心 | Powered by CHiLL106699
-    </div>
+      <div class="error-message" id="errorMessage">
+        ❌ 密碼錯誤，請重試
+      </div>
+    </form>
   </div>
 
   <script>
-    // 管理員密碼（SHA-256 hash）
-    // 預設密碼: admin123
-    const ADMIN_PASSWORD_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
-    
-    const loginForm = document.getElementById('loginForm');
-    const passwordInput = document.getElementById('password');
-    const errorMessage = document.getElementById('errorMessage');
-    const togglePassword = document.getElementById('togglePassword');
+    // 簡單的密碼驗證（實際應該使用後端驗證）
+    const ADMIN_PASSWORD = 'admin123'; // 之後可以改為環境變數
 
-    // 密碼顯示/隱藏切換
-    togglePassword.addEventListener('click', () => {
-      const type = passwordInput.type === 'password' ? 'text' : 'password';
-      passwordInput.type = type;
-      togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
-    });
-
-    // SHA-256 hash 函數
-    async function sha256(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
-    }
-
-    // 登入表單提交
-    loginForm.addEventListener('submit', async (e) => {
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
       e.preventDefault();
       
-      const password = passwordInput.value;
-      const passwordHash = await sha256(password);
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('errorMessage');
       
-      if (passwordHash === ADMIN_PASSWORD_HASH) {
-        // 登入成功，儲存 session
-        sessionStorage.setItem('multiClinicAuth', 'true');
-        sessionStorage.setItem('loginTime', Date.now());
-        
-        // 跳轉到管理中心儀表板
-        window.location.href = '/multi-clinic-dashboard.html';
+      if (password === ADMIN_PASSWORD) {
+        // 儲存登入狀態
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        // 跳轉到管理頁面
+        window.location.href = 'multi-clinic-dashboard.html';
       } else {
-        // 登入失敗
         errorMessage.classList.add('show');
-        passwordInput.value = '';
-        passwordInput.focus();
-        
         setTimeout(() => {
           errorMessage.classList.remove('show');
         }, 3000);
       }
     });
-
-    // 檢查是否已登入
-    if (sessionStorage.getItem('multiClinicAuth') === 'true') {
-      const loginTime = parseInt(sessionStorage.getItem('loginTime'));
-      const now = Date.now();
-      
-      // Session 有效期 24 小時
-      if (now - loginTime < 24 * 60 * 60 * 1000) {
-        window.location.href = '/multi-clinic-dashboard.html';
-      } else {
-        sessionStorage.removeItem('multiClinicAuth');
-        sessionStorage.removeItem('loginTime');
-      }
-    }
   </script>
 </body>
 </html>
