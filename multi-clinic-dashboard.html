@@ -620,6 +620,9 @@
                 <button class="btn-secondary" onclick="viewClinicDetails('${clinic.slug}')">
                   📊 查看詳情
                 </button>
+                <button class="btn-secondary" onclick="editClinic('${clinic.id}')" style="background: #FFA726;">
+                  ✏️ 編輯
+                </button>
               </div>
 
               <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
@@ -668,6 +671,73 @@
       document.getElementById('addClinicForm').reset();
     }
 
+    // 編輯診所功能
+    async function editClinic(clinicId) {
+      try {
+        // 從 Supabase 載入診所資料
+        const { data, error } = await supabase
+          .from('clinics')
+          .select('*')
+          .eq('id', clinicId)
+          .single();
+        
+        if (error) throw error;
+        
+        // 填充表單
+        document.getElementById('editClinicId').value = data.id;
+        document.getElementById('editClinicName').value = data.clinic_name || '';
+        document.getElementById('editClinicSlug').value = data.slug || '';
+        document.getElementById('editLineBotId').value = data.line_bot_id || '';
+        document.getElementById('editAdminUrl').value = data.admin_url || '';
+        document.getElementById('editSupabaseUrl').value = data.supabase_url || '';
+        document.getElementById('editSupabaseKey').value = data.supabase_key || '';
+        document.getElementById('editTableName').value = data.table_name || '';
+        
+        // 顯示 modal
+        document.getElementById('editClinicModal').style.display = 'flex';
+      } catch (error) {
+        console.error('載入診所資料失敗:', error);
+        alert('載入診所資料失敗：' + error.message);
+      }
+    }
+
+    function closeEditClinicModal() {
+      document.getElementById('editClinicModal').style.display = 'none';
+      document.getElementById('editClinicForm').reset();
+    }
+
+    async function submitEditClinic(event) {
+      event.preventDefault();
+      
+      const clinicId = document.getElementById('editClinicId').value;
+      const clinicData = {
+        clinic_name: document.getElementById('editClinicName').value,
+        slug: document.getElementById('editClinicSlug').value,
+        line_bot_id: document.getElementById('editLineBotId').value,
+        admin_url: document.getElementById('editAdminUrl').value,
+        supabase_url: document.getElementById('editSupabaseUrl').value,
+        supabase_key: document.getElementById('editSupabaseKey').value,
+        table_name: document.getElementById('editTableName').value,
+        updated_at: new Date().toISOString()
+      };
+      
+      try {
+        const { data, error } = await supabase
+          .from('clinics')
+          .update(clinicData)
+          .eq('id', clinicId);
+        
+        if (error) throw error;
+        
+        alert('✅ 診所資料已更新！');
+        closeEditClinicModal();
+        loadClinics(); // 重新載入診所列表
+      } catch (error) {
+        console.error('更新診所失敗:', error);
+        alert('更新診所失敗：' + error.message);
+      }
+    }
+
     // 提交新增診所
     async function submitAddClinic(event) {
       event.preventDefault();
@@ -711,6 +781,60 @@
     // 每30秒自動重新整理數據
     setInterval(loadClinics, 30000);
   </script>
+
+  <!-- 編輯診所 Modal -->
+  <div id="editClinicModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✏️ 編輯診所</h2>
+        <button class="modal-close" onclick="closeEditClinicModal()">&times;</button>
+      </div>
+      <form id="editClinicForm" onsubmit="submitEditClinic(event)">
+        <input type="hidden" id="editClinicId" name="editClinicId">
+        
+        <div class="form-group">
+          <label for="editClinicName">診所名稱 *</label>
+          <input type="text" id="editClinicName" name="editClinicName" required placeholder="例：邊美診所">
+        </div>
+        
+        <div class="form-group">
+          <label for="editClinicSlug">診所代碼 (Slug) *</label>
+          <input type="text" id="editClinicSlug" name="editClinicSlug" required placeholder="例：yuemei" pattern="[a-z0-9-]+">
+          <small style="color: #666;">只能使用小寫英文、數字和連字號</small>
+        </div>
+        
+        <div class="form-group">
+          <label for="editLineBotId">LINE Bot ID *</label>
+          <input type="text" id="editLineBotId" name="editLineBotId" required placeholder="例：@759wnkso">
+        </div>
+        
+        <div class="form-group">
+          <label for="editAdminUrl">後台網址 *</label>
+          <input type="url" id="editAdminUrl" name="editAdminUrl" required placeholder="https://example.netlify.app/admin-dashboard.html">
+        </div>
+        
+        <div class="form-group">
+          <label for="editSupabaseUrl">Supabase URL *</label>
+          <input type="url" id="editSupabaseUrl" name="editSupabaseUrl" required placeholder="https://xxx.supabase.co">
+        </div>
+        
+        <div class="form-group">
+          <label for="editSupabaseKey">Supabase API Key *</label>
+          <input type="text" id="editSupabaseKey" name="editSupabaseKey" required placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+        </div>
+        
+        <div class="form-group">
+          <label for="editTableName">資料表名稱 *</label>
+          <input type="text" id="editTableName" name="editTableName" required placeholder="例：flos_appointments">
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeEditClinicModal()">取消</button>
+          <button type="submit" class="btn-submit">儲存變更</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- 新增診所Modal -->
   <div id="addClinicModal" class="modal">
