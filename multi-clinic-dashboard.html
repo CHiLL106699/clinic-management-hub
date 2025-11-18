@@ -302,6 +302,141 @@
       100% { transform: rotate(360deg); }
     }
 
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .btn-submit {
+      flex: 1;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 12px;
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-cancel:hover {
+      background: #667eea;
+      color: white;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header {
@@ -330,6 +465,7 @@
       </div>
     </div>
     <div class="header-right">
+      <button class="btn btn-payment" onclick="showAddClinicModal()" style="background: rgba(33, 150, 243, 0.9);">➕ 新增診所</button>
       <a href="clinic-authorization.html" class="btn btn-payment" style="background: rgba(76, 175, 80, 0.9);">🔐 授權管理</a>
       <a href="payment-methods.html" class="btn btn-payment">💳 付款方式</a>
       <button class="btn btn-logout" onclick="logout()">登出</button>
@@ -520,6 +656,53 @@
       alert(`診所詳情功能開發中...\n診所代碼: ${slug}`);
     }
 
+    // 顯示新增診所Modal
+    function showAddClinicModal() {
+      document.getElementById('addClinicModal').classList.add('active');
+    }
+
+    // 關閉新增診所Modal
+    function closeAddClinicModal() {
+      document.getElementById('addClinicModal').classList.remove('active');
+      document.getElementById('addClinicForm').reset();
+    }
+
+    // 提交新增診所
+    async function submitAddClinic(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const clinicData = {
+        name: formData.get('clinicName'),
+        slug: formData.get('clinicSlug'),
+        line_bot_id: formData.get('lineBotId'),
+        admin_url: formData.get('adminUrl'),
+        supabase_url: formData.get('supabaseUrl'),
+        supabase_key: formData.get('supabaseKey'),
+        table_name: formData.get('tableName'),
+        is_authorized: false,
+        subscription_status: 'inactive',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      try {
+        const { data, error } = await multiClient
+          .from('clinics')
+          .insert([clinicData])
+          .select();
+
+        if (error) throw error;
+
+        alert('✅ 診所新增成功！');
+        closeAddClinicModal();
+        loadClinics();
+      } catch (error) {
+        console.error('Error adding clinic:', error);
+        alert('❌ 新增失敗：' + error.message);
+      }
+    }
+
     // 初始化
     checkAuth();
     loadClinics();
@@ -527,5 +710,50 @@
     // 每30秒自動重新整理數據
     setInterval(loadClinics, 30000);
   </script>
+
+  <!-- 新增診所Modal -->
+  <div id="addClinicModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>➕ 新增診所</h2>
+        <button class="modal-close" onclick="closeAddClinicModal()">&times;</button>
+      </div>
+      <form id="addClinicForm" onsubmit="submitAddClinic(event)">
+        <div class="form-group">
+          <label for="clinicName">診所名稱 *</label>
+          <input type="text" id="clinicName" name="clinicName" required placeholder="例：邊美診所">
+        </div>
+        <div class="form-group">
+          <label for="clinicSlug">診所代碼 (Slug) *</label>
+          <input type="text" id="clinicSlug" name="clinicSlug" required placeholder="例：yuemei" pattern="[a-z0-9-]+">
+          <small style="color: #666;">只能使用小寫英文、數字和連字號</small>
+        </div>
+        <div class="form-group">
+          <label for="lineBotId">LINE Bot ID *</label>
+          <input type="text" id="lineBotId" name="lineBotId" required placeholder="例：@759wnkso">
+        </div>
+        <div class="form-group">
+          <label for="adminUrl">後台網址 *</label>
+          <input type="url" id="adminUrl" name="adminUrl" required placeholder="https://example.netlify.app/admin-dashboard.html">
+        </div>
+        <div class="form-group">
+          <label for="supabaseUrl">Supabase URL *</label>
+          <input type="url" id="supabaseUrl" name="supabaseUrl" required placeholder="https://xxx.supabase.co">
+        </div>
+        <div class="form-group">
+          <label for="supabaseKey">Supabase API Key *</label>
+          <input type="text" id="supabaseKey" name="supabaseKey" required placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+        </div>
+        <div class="form-group">
+          <label for="tableName">資料表名稱 *</label>
+          <input type="text" id="tableName" name="tableName" required placeholder="例：flos_appointments">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeAddClinicModal()">取消</button>
+          <button type="submit" class="btn-submit">新增診所</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

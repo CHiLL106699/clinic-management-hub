@@ -408,7 +408,7 @@
 
     // 檢查登入狀態
     function checkAuth() {
-      if (sessionStorage.getItem('multiClinicAuth') !== 'true') {
+      if (sessionStorage.getItem('adminAuth') !== 'true') {
         window.location.href = '/multi-clinic-login.html';
         return false;
       }
