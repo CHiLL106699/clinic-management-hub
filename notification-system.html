@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>授權通知系統 - 多診所管理中心</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-icon {
+      font-size: 32px;
+    }
+
+    .header-title h1 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .header-title p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      color: white;
+    }
+
+    .btn-back {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid white;
+    }
+
+    .btn-back:hover {
+      background: white;
+      color: #667eea;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* Card */
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .card-header h2 {
+      font-size: 20px;
+      color: #333;
+    }
+
+    .card-icon {
+      font-size: 28px;
+    }
+
+    /* Settings */
+    .setting-group {
+      margin-bottom: 25px;
+    }
+
+    .setting-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .setting-label h3 {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #4caf50;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    .setting-description {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    /* Notification Log */
+    .notification-log {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .log-item {
+      padding: 15px;
+      border-left: 4px solid #667eea;
+      background: #f8f9fa;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .log-item.success {
+      border-left-color: #4caf50;
+    }
+
+    .log-item.error {
+      border-left-color: #f44336;
+    }
+
+    .log-time {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 5px;
+    }
+
+    .log-message {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .log-clinic {
+      font-size: 13px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    /* Button */
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-danger {
+      background: #f44336;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+      transform: translateY(-2px);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <span class="logo-icon">🔔</span>
+      <div class="header-title">
+        <h1>授權通知系統</h1>
+        <p>Notification System</p>
+      </div>
+    </div>
+    <a href="multi-clinic-dashboard.html" class="btn btn-back">← 返回儀表板</a>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- 通知設定 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">⚙️</span>
+        <h2>通知設定</h2>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">
+          <h3>啟用自動通知</h3>
+          <label class="toggle-switch">
+            <input type="checkbox" id="autoNotification" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p class="setting-description">自動檢查並發送訂閱到期提醒通知</p>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">
+          <h3>通知時間點</h3>
+        </div>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="notify7days" checked>
+            <label for="notify7days">到期前 7 天</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="notify3days" checked>
+            <label for="notify3days">到期前 3 天</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="notify1day" checked>
+            <label for="notify1day">到期前 1 天</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="notifyExpired" checked>
+            <label for="notifyExpired">已過期</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="setting-label">
+          <h3>授權變更通知</h3>
+          <label class="toggle-switch">
+            <input type="checkbox" id="authChangeNotification" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p class="setting-description">當診所授權狀態變更時，自動發送 LINE 通知給診所管理員</p>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="saveSettings()">💾 儲存設定</button>
+        <button class="btn-primary" onclick="checkNow()">🔍 立即檢查</button>
+        <button class="btn-danger" onclick="clearLogs()">🗑️ 清除記錄</button>
+      </div>
+    </div>
+
+    <!-- 通知記錄 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📋</span>
+        <h2>通知記錄</h2>
+      </div>
+      <div id="notificationLog" class="notification-log">
+        <div class="loading">載入中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Supabase 設定
+    const SUPABASE_URL = 'https://pizzpwesrbulfjylejlu.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpenpwd2VzcmJ1bGZqeWxlamx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE4NTU0NTIsImV4cCI6MjA0NzQzMTQ1Mn0.kBvSHCNBUlLkqjBnVDXm7Ry8vqaYpqULQUbfNyxFGbk';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // 檢查登入狀態
+    function checkAuth() {
+      const isAuthenticated = sessionStorage.getItem('adminAuth');
+      if (!isAuthenticated) {
+        window.location.href = 'multi-clinic-login.html';
+      }
+    }
+
+    // 載入通知記錄
+    async function loadNotificationLogs() {
+      try {
+        // 這裡可以從資料庫載入通知記錄
+        // 目前先顯示範例
+        const logs = [
+          {
+            time: '2025-11-17 20:30:00',
+            type: 'success',
+            message: '成功發送到期提醒通知',
+            clinic: '邊美診所 - 訂閱將於 7 天後到期'
+          }
+        ];
+
+        const logHtml = logs.map(log => `
+          <div class="log-item ${log.type}">
+            <div class="log-time">${log.time}</div>
+            <div class="log-message">${log.message}</div>
+            <div class="log-clinic">${log.clinic}</div>
+          </div>
+        `).join('');
+
+        document.getElementById('notificationLog').innerHTML = logHtml || '<div class="loading">暫無通知記錄</div>';
+      } catch (error) {
+        console.error('Error loading logs:', error);
+        document.getElementById('notificationLog').innerHTML = '<div class="loading">載入失敗</div>';
+      }
+    }
+
+    // 儲存設定
+    async function saveSettings() {
+      const settings = {
+        autoNotification: document.getElementById('autoNotification').checked,
+        notify7days: document.getElementById('notify7days').checked,
+        notify3days: document.getElementById('notify3days').checked,
+        notify1day: document.getElementById('notify1day').checked,
+        notifyExpired: document.getElementById('notifyExpired').checked,
+        authChangeNotification: document.getElementById('authChangeNotification').checked
+      };
+
+      // 儲存到 localStorage
+      localStorage.setItem('notificationSettings', JSON.stringify(settings));
+      alert('✅ 設定已儲存！');
+    }
+
+    // 立即檢查
+    async function checkNow() {
+      try {
+        const { data: clinics, error } = await supabase
+          .from('clinics')
+          .select('*')
+          .eq('is_authorized', true);
+
+        if (error) throw error;
+
+        let notifications = [];
+        const now = new Date();
+
+        clinics.forEach(clinic => {
+          if (clinic.subscription_end_date) {
+            const endDate = new Date(clinic.subscription_end_date);
+            const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+
+            if (daysLeft === 7 || daysLeft === 3 || daysLeft === 1) {
+              notifications.push({
+                clinic: clinic.name,
+                daysLeft: daysLeft,
+                message: `訂閱將於 ${daysLeft} 天後到期`
+              });
+            } else if (daysLeft <= 0) {
+              notifications.push({
+                clinic: clinic.name,
+                daysLeft: daysLeft,
+                message: '訂閱已過期'
+              });
+            }
+          }
+        });
+
+        if (notifications.length > 0) {
+          const message = notifications.map(n => `${n.clinic}: ${n.message}`).join('\n');
+          alert(`🔔 發現 ${notifications.length} 個需要通知的診所：\n\n${message}`);
+        } else {
+          alert('✅ 目前沒有需要發送通知的診所');
+        }
+      } catch (error) {
+        console.error('Error checking:', error);
+        alert('❌ 檢查失敗：' + error.message);
+      }
+    }
+
+    // 清除記錄
+    function clearLogs() {
+      if (confirm('確定要清除所有通知記錄嗎？')) {
+        document.getElementById('notificationLog').innerHTML = '<div class="loading">暫無通知記錄</div>';
+        alert('✅ 記錄已清除');
+      }
+    }
+
+    // 載入設定
+    function loadSettings() {
+      const settings = localStorage.getItem('notificationSettings');
+      if (settings) {
+        const parsed = JSON.parse(settings);
+        document.getElementById('autoNotification').checked = parsed.autoNotification !== false;
+        document.getElementById('notify7days').checked = parsed.notify7days !== false;
+        document.getElementById('notify3days').checked = parsed.notify3days !== false;
+        document.getElementById('notify1day').checked = parsed.notify1day !== false;
+        document.getElementById('notifyExpired').checked = parsed.notifyExpired !== false;
+        document.getElementById('authChangeNotification').checked = parsed.authChangeNotification !== false;
+      }
+    }
+
+    // 初始化
+    checkAuth();
+    loadSettings();
+    loadNotificationLogs();
+  </script>
+</body>
+</html>
